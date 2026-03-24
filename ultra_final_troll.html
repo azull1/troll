@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>System Process</title>
+
+<style>
+body {
+  margin:0;
+  background:black;
+  font-family: monospace;
+  overflow:hidden;
+  color:white; /* Beyaz yazılar */
+  cursor:none; /* Mouse gizle */
+}
+
+/* Terminal */
+#terminal {
+  padding:20px;
+  font-size:16px;
+  line-height:1.4em;
+}
+
+/* Cursor */
+.cursor {
+  display:inline-block;
+  width:10px;
+  background:white;
+  margin-left:2px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%,50%,100% { opacity:1; }
+  25%,75% { opacity:0; }
+}
+
+/* Popup */
+#popup {
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:400px;
+  background:#111;
+  border:2px solid red;
+  color:white;
+  font-family:sans-serif;
+  display:none;
+  z-index:999;
+  box-shadow:0 0 20px red;
+}
+
+#popup-header {
+  background:red;
+  padding:10px;
+  font-weight:bold;
+}
+
+#popup-body {
+  padding:20px;
+}
+
+#popup button {
+  margin-top:15px;
+  padding:8px 15px;
+  background:red;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div id="terminal"></div>
+
+<div id="popup">
+  <div id="popup-header">SYSTEM ALERT</div>
+  <div id="popup-body">
+    Unauthorized access detected.<br><br>
+    Your mouse input is blocked.<br><br>
+    <b>Just kidding 😄</b><br>
+    This was a harmless prank.
+    <br><br>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<script>
+const terminal = document.getElementById("terminal");
+
+const lines = [
+"root@system:~# initializing connection...",
+"root@system:~# connecting to remote host...",
+"root@system:~# access granted",
+"root@system:~# scanning network...",
+"root@system:~# fetching IP address...",
+"root@system:~# IP FOUND: 192.168.0.21",
+"root@system:~# scanning ports...",
+"root@system:~# port 22 open",
+"root@system:~# port 443 open",
+"root@system:~# extracting data...",
+"root@system:~# decrypting files...",
+"root@system:~# WARNING: suspicious activity detected",
+"root@system:~# escalating privileges...",
+"root@system:~# ROOT ACCESS GRANTED"
+];
+
+let i = 0;
+let j = 0;
+
+function typeLine() {
+  if (i < lines.length) {
+    if (j < lines[i].length) {
+      terminal.innerHTML += lines[i][j];
+      j++;
+      setTimeout(typeLine, 25);
+    } else {
+      terminal.innerHTML += "<br>";
+      i++;
+      j = 0;
+      setTimeout(typeLine, 300);
+    }
+  } else {
+    showPopup();
+  }
+}
+
+function showPopup(){
+  document.getElementById("popup").style.display = "block";
+}
+
+// Mouse kilitleme sahte: sayfada hiçbir tıklama / hareket çalışmıyor gibi
+document.addEventListener('mousemove', e => e.preventDefault());
+document.addEventListener('mousedown', e => e.preventDefault());
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => e.preventDefault());
+
+function closePopup(){
+  document.getElementById("popup").style.display = "none";
+}
+
+typeLine();
+
+// blinking cursor
+setInterval(() => {
+  let cursor = document.querySelector(".cursor");
+  if (!cursor) {
+    terminal.innerHTML += '<span class="cursor"></span>';
+  }
+}, 500);
+
+// fullscreen on click
+document.body.onclick = () => {
+  document.documentElement.requestFullscreen().catch(()=>{});
+};
+</script>
+
+</body>
+</html>
